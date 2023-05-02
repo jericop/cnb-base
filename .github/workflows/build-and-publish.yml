@@ -1,5 +1,5 @@
 name: Base images
-on: push
+on: [push, pull_request]
 env:
   DOCKER_CLI_EXPERIMENTAL: 'enabled'
   PUSH: ${{ github.ref == 'refs/heads/main' && '--push' || '' }}
