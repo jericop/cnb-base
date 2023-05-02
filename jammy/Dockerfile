@@ -35,7 +35,8 @@ apt-get update
 apt-get install -y \
   curl \
   jq \
-  unzip
+  unzip \
+  wget
 apt-get clean all
 
 YJ_URL=https://github.com/sclevine/yj/releases/download/v5.1.0/yj-linux-amd64
