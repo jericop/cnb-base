@@ -15,5 +15,5 @@ This creates multi-arch (amd64 and arm64) build and run images based on jammy.
   * Includes label `io.buildpacks.stack.id=io.buildpacks.stacks.jericop.jammy`
     * For backward compatibility
   * Includes label `io.buildpacks.id=jericop.jammy`
-* `target`
+* `latest`
   * Same as `target`
