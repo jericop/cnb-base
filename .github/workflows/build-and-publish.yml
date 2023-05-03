@@ -26,9 +26,11 @@ jobs:
 
           for base_img in build run; do
             for tag in stack target; do
+              image_uri="ghcr.io/jericop/${base_img}-jammy"
+              
               # Also push `latest` tag based on `target` so stack and new id labels are set
               if [ "$tag" = "target" ]; then
-                latest_tag="--tag ghcr.io/jericop/build-jammy:latest"
+                latest_tag="--tag ${image_uri}:latest"
               else
                 latest_tag=
               fi
@@ -37,7 +39,7 @@ jobs:
                 --target "${base_img}-cnb-${tag}" \
                 --platform linux/amd64 \
                 --platform linux/arm64 \
-                --tag "ghcr.io/jericop/build-jammy:${tag}" \
+                --tag "${image_uri}:${tag}" \
                 $latest_tag \
                 ${{ env.PUSH }} \
                 .
