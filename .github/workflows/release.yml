@@ -4,7 +4,7 @@ on:
     branches:
       - 'main'
 jobs:
-  jammy:
+  build-and-push:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
