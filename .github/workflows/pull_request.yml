@@ -1,0 +1,13 @@
+name: Build images
+on: pull_request
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - uses: jericop/buildpacks-github-actions/setup-tools@add-arm64-support
+      - uses: ./.github/actions/build
+        with:
+          path: 'jammy'
