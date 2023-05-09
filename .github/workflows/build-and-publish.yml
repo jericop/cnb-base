@@ -43,5 +43,15 @@ jobs:
                 $latest_tag \
                 ${{ env.PUSH }} \
                 .
+
+              # Push platform specific tags (for testing/rebasing purposes)
+              for arch_ in amd64 arm64; do
+                ddd
+                docker pull -q "${image_uri}:${tag}" --platform "linux/${arch_}"
+                docker tag "${image_uri}:${tag}" "${image_uri}:${tag}-${arch_}"
+                if [ ! -z "${{ env.PUSH }}" ]; then
+                  docker push "${image_uri}:${tag}-${arch_}"
+                fi
+              done
             done
           done
