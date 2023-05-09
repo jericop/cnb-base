@@ -55,4 +55,13 @@ runs:
               fi
             done
           done
+
+          # Push platform specific tags for latest (for testing/rebasing purposes)
+          for arch_ in amd64 arm64; do
+            docker pull -q "${image_uri}:latest" --platform "linux/${arch_}"
+            docker tag "${image_uri}:latest" "${image_uri}:latest-${arch_}"
+            if [ ! -z "$push" ]; then
+              docker push "${image_uri}:latest-${arch_}"
+            fi
+          done
         done
