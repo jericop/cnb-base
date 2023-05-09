@@ -1,0 +1,58 @@
+name:        'Build'
+description: 'Build multi-arch and arch-specific images'
+
+inputs:
+  path:
+    description:  'Path for docker context. It will also be used in the image name'
+    required:     true
+  push:
+    description:  'Push images true/false'
+    required:     true
+    default:      'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build
+      shell: bash
+      run: |
+        #!/usr/bin/env bash -euo pipefail
+
+        cd ${{ inputs.path }}
+        set -x
+
+        for base_img in build run; do
+          for tag in stack target; do
+            image_uri="ghcr.io/jericop/${base_img}-${{ inputs.path }}"
+            
+            push=""
+            if [ "${{ inputs.push }}" = "true" ]; then
+              push="--push"
+            fi
+
+            # Also push `latest` tag based on `target` so stack and new id labels are set
+            if [ "$tag" = "target" ]; then
+              latest_tag="--tag ${image_uri}:latest"
+            else
+              latest_tag=
+            fi
+
+            docker buildx build \
+              --target "${base_img}-cnb-${tag}" \
+              --platform linux/amd64 \
+              --platform linux/arm64 \
+              --tag "${image_uri}:${tag}" \
+              $latest_tag \
+              $push \
+              .
+
+            # Push platform specific tags (for testing/rebasing purposes)
+            for arch_ in amd64 arm64; do
+              docker pull -q "${image_uri}:${tag}" --platform "linux/${arch_}"
+              docker tag "${image_uri}:${tag}" "${image_uri}:${tag}-${arch_}"
+              if [ ! -z "$push" ]; then
+                docker push "${image_uri}:${tag}-${arch_}"
+              fi
+            done
+          done
+        done
