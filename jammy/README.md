@@ -4,8 +4,15 @@ This creates multi-arch (amd64 and arm64) build and run images based on jammy.
 
 # Publishes the following images
 
+## github container registry
+
 * `ghcr.io/jericop/build-jammy`
 * `ghcr.io/jericop/run-jammy`
+
+## docker hub
+
+* `jericop/build-jammy`
+* `jericop/run-jammy`
 
 # Image tags
 
