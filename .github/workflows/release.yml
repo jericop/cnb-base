@@ -23,4 +23,5 @@ jobs:
       - uses: ./.github/actions/build
         with:
           path: 'jammy'
+          registries: 'ghcr.io/jericop jericop'
           push: 'true'

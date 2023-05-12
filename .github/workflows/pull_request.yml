@@ -11,3 +11,5 @@ jobs:
       - uses: ./.github/actions/build
         with:
           path: 'jammy'
+          registries: 'ttl.sh/ghcr/jericop ttl.sh/dockerhub/jericop'
+          push: 'true'

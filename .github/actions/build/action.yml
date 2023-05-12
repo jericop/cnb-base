@@ -5,6 +5,9 @@ inputs:
   path:
     description:  'Path for docker context. It will also be used in the image name'
     required:     true
+  registries:
+    description:  'A space separated list of registries where images will be pushed.'
+    required:     true
   push:
     description:  'Push images true/false'
     required:     true
@@ -21,7 +24,7 @@ runs:
         cd ${{ inputs.path }}
         set -x
 
-        for registry_repo in ghcr.io/jericop jericop; do
+        for registry_repo in ${{ inputs.registries }}; do
           for base_img in build run; do
             for tag in stack target; do
               image_uri="${registry_repo}/${base_img}-${{ inputs.path }}"
