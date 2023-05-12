@@ -21,47 +21,31 @@ runs:
         cd ${{ inputs.path }}
         set -x
 
-        for base_img in build run; do
-          for tag in stack target; do
-            image_uri="ghcr.io/jericop/${base_img}-${{ inputs.path }}"
-            
-            push=""
-            if [ "${{ inputs.push }}" = "true" ]; then
-              push="--push"
-            fi
-
-            # Also push `latest` tag based on `target` so stack and new id labels are set
-            if [ "$tag" = "target" ]; then
-              latest_tag="--tag ${image_uri}:latest"
-            else
-              latest_tag=
-            fi
-
-            docker buildx build \
-              --target "${base_img}-cnb-${tag}" \
-              --platform linux/amd64 \
-              --platform linux/arm64 \
-              --tag "${image_uri}:${tag}" \
-              $latest_tag \
-              $push \
-              .
-
-            # Push platform specific tags (for testing/rebasing purposes)
-            for arch_ in amd64 arm64; do
-              docker pull -q "${image_uri}:${tag}" --platform "linux/${arch_}"
-              docker tag "${image_uri}:${tag}" "${image_uri}:${tag}-${arch_}"
-              if [ ! -z "$push" ]; then
-                docker push "${image_uri}:${tag}-${arch_}"
+        for registry_repo in ghcr.io/jericop jericop; do
+          for base_img in build run; do
+            for tag in stack target; do
+              image_uri="${registry_repo}/${base_img}-${{ inputs.path }}"
+              
+              push=""
+              if [ "${{ inputs.push }}" = "true" ]; then
+                push="--push"
               fi
-            done
-          done
 
-          # Push platform specific tags for latest (for testing/rebasing purposes)
-          for arch_ in amd64 arm64; do
-            docker pull -q "${image_uri}:latest" --platform "linux/${arch_}"
-            docker tag "${image_uri}:latest" "${image_uri}:latest-${arch_}"
-            if [ ! -z "$push" ]; then
-              docker push "${image_uri}:latest-${arch_}"
-            fi
+              # Also push `latest` tag based on `target` so stack and new id labels are set
+              if [ "$tag" = "target" ]; then
+                latest_tag="--tag ${image_uri}:latest"
+              else
+                latest_tag=
+              fi
+
+              docker buildx build \
+                --target "${base_img}-cnb-${tag}" \
+                --platform linux/amd64 \
+                --platform linux/arm64 \
+                --tag "${image_uri}:${tag}" \
+                $latest_tag \
+                $push \
+                .
+            done
           done
         done
